@@ -1,12 +1,12 @@
-import "dotenv/config";
-import express from "express";
-import cors from "cors";
-import ndviRoutes from "./routes/ndvi.routes.js";
+import app from "./app.js";
+import connectDB from "./config/db.js";
+import { initSyncCron } from "./cron/sync.cron.js";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 4000;
 
-app.use("/ndvi", ndviRoutes);
+await connectDB();
+initSyncCron();
 
-app.listen(process.env.PORT || 3000, () => console.log("up"));
+app.listen(PORT, () => {
+  console.log("FarmTrack Server is running on port " + PORT);
+});
