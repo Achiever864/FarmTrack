@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = "https://farmtrack-bd7x.onrender.com";
 
 function getToken() {
   return localStorage.getItem("farmtrack_token");
