@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import { Layers, Eye, EyeOff } from "lucide-react";
+import { api } from "../api/client.js";
 
 export function FarmMap({ farm, healthStatus = "healthy" }) {
   const mapContainerRef = useRef(null);
@@ -107,7 +108,7 @@ export function FarmMap({ farm, healthStatus = "healthy" }) {
     fromDate.setDate(fromDate.getDate() - 45); // last 45 days
     const from = fromDate.toISOString().slice(0, 10);
 
-    const overlayUrl = `/api/ndvi?bbox=${bbox.join(",")}&from=${from}&to=${to}`;
+    const overlayUrl = api.ndvi.getOverlayUrl({ bbox, from, to });
     const imageBounds = [[minLat, minLng], [maxLat, maxLng]];
 
     const imageOverlay = L.imageOverlay(overlayUrl, imageBounds, {

@@ -1,4 +1,6 @@
-const API_BASE = "https://farmtrack-bd7x.onrender.com";
+// Base API URL: uses VITE_API_BASE if provided (e.g. via .env), or defaults to hosted Render backend.
+const rawBase = import.meta.env.VITE_API_BASE || "https://farmtrack-bd7x.onrender.com";
+export const API_BASE = rawBase.replace(/\/$/, "");
 
 function getToken() {
   return localStorage.getItem("farmtrack_token");
@@ -12,10 +14,21 @@ async function request(endpoint, options = {}) {
     ...options.headers,
   };
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE}${cleanEndpoint}`;
+
+  let response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch (networkError) {
+    console.error(`[FarmTrack API Error] Failed to fetch ${url}:`, networkError);
+    throw new Error(
+      "Unable to reach the FarmTrack server. Note: If the backend was sleeping on Render, it takes ~30-50s to wake up on the first request. Please wait a moment and try again."
+    );
+  }
 
   if (!response.ok) {
     let errorMsg = `Request failed (${response.status})`;
