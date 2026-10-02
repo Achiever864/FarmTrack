@@ -23,7 +23,135 @@ import {
   Radar,
   Award,
   Zap,
+  Camera,
 } from "lucide-react";
+
+// Team Directory: Replace the image paths below with your actual photo URLs or drop images into frontend/public/team/
+const TEAM_MEMBERS = [
+  {
+    id: "igaga",
+    name: "Igaga Ikhuemoisa Adeoluwa",
+    role: "Founder • Backend & AI Engineer",
+    affiliation: "University of Ibadan",
+    initials: "IA",
+    image: "/team/igaga.jpg", // Drop igaga.jpg into frontend/public/team/
+    bio: "Raised with deep roots in rural farming communities, experiencing smallholder agriculture firsthand. Passionate about harnessing modern AI, satellite intelligence, and backend architectures to optimize crop yield and agricultural resilience across Nigeria.",
+    theme: {
+      bg: "bg-forest-100",
+      border: "border-forest-300",
+      ring: "ring-forest-500/20",
+      text: "text-forest-800",
+      roleText: "text-forest-700",
+    },
+  },
+  {
+    id: "akano",
+    name: "Akano Hazeem Olamilekan",
+    role: "Co-Founder • Technology Lead",
+    affiliation: "Computer Science • University of Ibadan",
+    initials: "AO",
+    image: "/team/akano.jpg", // Drop akano.jpg into frontend/public/team/
+    bio: "Multi-award-winning technologist recognized for impactful contributions in the tech ecosystem. Directs product strategy, software reliability, and systems execution to turn complex remote-sensing pipelines into accessible solutions for growers.",
+    theme: {
+      bg: "bg-emerald-100",
+      border: "border-emerald-300",
+      ring: "ring-emerald-500/20",
+      text: "text-emerald-800",
+      roleText: "text-emerald-700",
+    },
+  },
+  {
+    id: "kelly",
+    name: "Kelly David Osi",
+    role: "Agronomic & Agricultural Economics Lead",
+    affiliation: "Agriculture & Agricultural Economics • University of Ibadan",
+    initials: "KO",
+    image: "/team/kelly.jpg", // Drop kelly.jpg into frontend/public/team/
+    bio: "Distinguished agricultural scholar renowned for his comprehensive understanding of crop management practices and agricultural economics. Bridges scientific agronomy with practical farm-gate economics to maximize farmer profitability.",
+    theme: {
+      bg: "bg-amber-100",
+      border: "border-amber-300",
+      ring: "ring-amber-500/20",
+      text: "text-amber-800",
+      roleText: "text-amber-700",
+    },
+  },
+  {
+    id: "shittu",
+    name: "Shittu Adeoluwa Emmanuel",
+    role: "Lead Full-Stack Engineer",
+    affiliation: "Award-Winning Developer • Systems Analyst",
+    initials: "SE",
+    image: "/team/shittu.jpg", // Drop shittu.jpg into frontend/public/team/
+    bio: "Celebrated developer lauded for deep technical acumen, analytical problem-solving, and architectural precision. Leads the development of high-performance user interfaces and scalable cloud-connected endpoints.",
+    theme: {
+      bg: "bg-teal-100",
+      border: "border-teal-300",
+      ring: "ring-teal-500/20",
+      text: "text-teal-800",
+      roleText: "text-teal-700",
+    },
+  },
+  {
+    id: "ibikunle",
+    name: "Ibikunle Fawas Olamide",
+    role: "Full-Stack Developer",
+    affiliation: "Software Engineering • University of Ibadan",
+    initials: "IO",
+    image: "/team/ibikunle.jpg", // Drop ibikunle.jpg into frontend/public/team/
+    bio: "Versatile software engineer known for exceptional technical range and attention to detail. Drives full-stack feature development, responsive UI workflows, and spatial telemetry integrations across the FarmTrack platform.",
+    theme: {
+      bg: "bg-indigo-100",
+      border: "border-indigo-300",
+      ring: "ring-indigo-500/20",
+      text: "text-indigo-800",
+      roleText: "text-indigo-700",
+    },
+  },
+];
+
+function TeamMemberCard({ member }) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-center space-y-4 flex flex-col justify-between hover:shadow-md transition-all">
+      <div className="space-y-3.5">
+        <div className="relative mx-auto w-24 h-24">
+          {!imageError && member.image ? (
+            <img
+              src={member.image}
+              alt={member.name}
+              onError={() => setImageError(true)}
+              className={`w-24 h-24 rounded-full object-cover border-2 ${member.theme.border} shadow-sm ring-4 ${member.theme.ring}`}
+            />
+          ) : (
+            <div
+              className={`w-24 h-24 rounded-full ${member.theme.bg} border-2 ${member.theme.border} flex flex-col items-center justify-center ${member.theme.text} shadow-sm ring-4 ${member.theme.ring}`}
+            >
+              <span className="font-bold text-2xl tracking-tight">{member.initials}</span>
+              <div className="flex items-center gap-1 text-[10px] font-medium opacity-70 mt-0.5">
+                <Camera className="w-3 h-3" />
+                <span>Photo</span>
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
+          <h4 className="font-bold text-slate-900 text-base">{member.name}</h4>
+          <div className={`text-xs font-semibold ${member.theme.roleText} mt-0.5`}>
+            {member.role}
+          </div>
+          <div className="text-[11px] text-slate-400 mt-0.5">
+            {member.affiliation}
+          </div>
+        </div>
+        <p className="text-xs text-slate-600 leading-relaxed">
+          {member.bio}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export function PublicLanding() {
   const [selectedDemoTab, setSelectedDemoTab] = useState("cocoa");
@@ -345,72 +473,20 @@ export function PublicLanding() {
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <div className="text-xs font-bold text-forest-600 uppercase tracking-wider">
-              Multidisciplinary Expertise
+              Multidisciplinary Innovation
             </div>
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
               Meet the Team Behind FarmTrack
             </h2>
             <p className="text-slate-600 text-sm">
-              We bring together agronomic field scientists, aerospace remote-sensing researchers, and software engineers committed to agricultural equity.
+              Driven by innovators and scholars from the University of Ibadan, our team unites firsthand rural agricultural insight with artificial intelligence, robust full-stack engineering, and agricultural economics.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-center space-y-3">
-              <div className="w-20 h-20 rounded-full bg-forest-100 border-2 border-forest-300 mx-auto flex items-center justify-center text-forest-800 font-bold text-xl shadow-xs">
-                AA
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-base">Dr. Aisha Alabi</h4>
-                <div className="text-xs font-semibold text-forest-700">Chief Agronomist</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">PhD Tree Crop Physiology &bull; CRIN Fellow</div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Over 16 years investigating cocoa physiology, shade tree agroforestry, and Harmattan drought response mechanisms in Ondo State.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-center space-y-3">
-              <div className="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-300 mx-auto flex items-center justify-center text-emerald-800 font-bold text-xl shadow-xs">
-                MO
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-base">Michael Osei</h4>
-                <div className="text-xs font-semibold text-emerald-700">Lead Geospatial Engineer</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">MSc Remote Sensing &bull; Ex-ESA Earth Observation</div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Specialist in Copernicus Sentinel constellation processing, custom radiometric evalscripts, and cloud masking algorithms.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-center space-y-3">
-              <div className="w-20 h-20 rounded-full bg-teal-100 border-2 border-teal-300 mx-auto flex items-center justify-center text-teal-800 font-bold text-xl shadow-xs">
-                CE
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-base">Chioma Eze</h4>
-                <div className="text-xs font-semibold text-teal-700">Systems Architect</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Distributed Data Systems & Tenancy</div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Architect of our concurrency-controlled queue pipelines, spatial indexing, and strict tenancy security protocols.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-center space-y-3">
-              <div className="w-20 h-20 rounded-full bg-amber-100 border-2 border-amber-300 mx-auto flex items-center justify-center text-amber-800 font-bold text-xl shadow-xs">
-                DM
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-base">David Mensah</h4>
-                <div className="text-xs font-semibold text-amber-700">Cooperative Lead</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Agricultural Extension & Partnerships</div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Leading deployment across 45+ farmer cooperatives in Ghana and Nigeria to ensure tools match real smallholder workflows.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TEAM_MEMBERS.map((member) => (
+              <TeamMemberCard key={member.id} member={member} />
+            ))}
           </div>
         </div>
       </section>
