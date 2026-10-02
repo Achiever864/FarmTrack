@@ -26,7 +26,13 @@ import {
   Camera,
 } from "lucide-react";
 
-// Team Directory: Replace the image paths below with your actual photo URLs or drop images into frontend/public/team/
+// Team member photos imported from src/assets
+import ikhuemoisaImg from "../assets/Ikhuemoisa.jpeg";
+import hazeemImg from "../assets/Hazeem.jpeg";
+import davidImg from "../assets/David.jpeg";
+import adeoluwaImg from "../assets/Adeoluwa.jpeg";
+import fawasImg from "../assets/Fawas.jpeg";
+
 const TEAM_MEMBERS = [
   {
     id: "igaga",
@@ -34,7 +40,7 @@ const TEAM_MEMBERS = [
     role: "Founder • Backend & AI Engineer",
     affiliation: "University of Ibadan",
     initials: "IA",
-    image: "/team/igaga.jpg", // Drop igaga.jpg into frontend/public/team/
+    image: ikhuemoisaImg,
     bio: "Raised with deep roots in rural farming communities, experiencing smallholder agriculture firsthand. Passionate about harnessing modern AI, satellite intelligence, and backend architectures to optimize crop yield and agricultural resilience across Nigeria.",
     theme: {
       bg: "bg-forest-100",
@@ -50,7 +56,7 @@ const TEAM_MEMBERS = [
     role: "Co-Founder • Technology Lead",
     affiliation: "Computer Science • University of Ibadan",
     initials: "AO",
-    image: "/team/akano.jpg", // Drop akano.jpg into frontend/public/team/
+    image: hazeemImg,
     bio: "Multi-award-winning technologist recognized for impactful contributions in the tech ecosystem. Directs product strategy, software reliability, and systems execution to turn complex remote-sensing pipelines into accessible solutions for growers.",
     theme: {
       bg: "bg-emerald-100",
@@ -66,7 +72,7 @@ const TEAM_MEMBERS = [
     role: "Agronomic & Agricultural Economics Lead",
     affiliation: "Agriculture & Agricultural Economics • University of Ibadan",
     initials: "KO",
-    image: "/team/kelly.jpg", // Drop kelly.jpg into frontend/public/team/
+    image: davidImg,
     bio: "Distinguished agricultural scholar renowned for his comprehensive understanding of crop management practices and agricultural economics. Bridges scientific agronomy with practical farm-gate economics to maximize farmer profitability.",
     theme: {
       bg: "bg-amber-100",
@@ -82,7 +88,7 @@ const TEAM_MEMBERS = [
     role: "Lead Full-Stack Engineer",
     affiliation: "Award-Winning Developer • Systems Analyst",
     initials: "SE",
-    image: "/team/shittu.jpg", // Drop shittu.jpg into frontend/public/team/
+    image: adeoluwaImg,
     bio: "Celebrated developer lauded for deep technical acumen, analytical problem-solving, and architectural precision. Leads the development of high-performance user interfaces and scalable cloud-connected endpoints.",
     theme: {
       bg: "bg-teal-100",
@@ -98,7 +104,7 @@ const TEAM_MEMBERS = [
     role: "Full-Stack Developer",
     affiliation: "Software Engineering • University of Ibadan",
     initials: "IO",
-    image: "/team/ibikunle.jpg", // Drop ibikunle.jpg into frontend/public/team/
+    image: fawasImg,
     bio: "Versatile software engineer known for exceptional technical range and attention to detail. Drives full-stack feature development, responsive UI workflows, and spatial telemetry integrations across the FarmTrack platform.",
     theme: {
       bg: "bg-indigo-100",
@@ -122,7 +128,7 @@ function TeamMemberCard({ member }) {
               src={member.image}
               alt={member.name}
               onError={() => setImageError(true)}
-              className={`w-24 h-24 rounded-full object-cover border-2 ${member.theme.border} shadow-sm ring-4 ${member.theme.ring}`}
+              className={`w-24 h-24 rounded-full object-cover object-top border-2 ${member.theme.border} shadow-sm ring-4 ${member.theme.ring}`}
             />
           ) : (
             <div
