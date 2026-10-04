@@ -228,8 +228,8 @@ export function Navbar() {
               <Link to="/about" className="hover:text-forest-700 transition">
                 Mission & Vision
               </Link>
-              <Link to="/about" className="hover:text-forest-700 transition">
-                Our Future Reach
+              <Link to="/about" className="hover:text-forest-700 transition font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                Otuo Field Pilot
               </Link>
               <Link to="/about" className="hover:text-forest-700 transition">
                 The Team

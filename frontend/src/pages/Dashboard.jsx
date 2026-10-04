@@ -13,6 +13,10 @@ import {
   Filter,
   ArrowUpRight,
   RefreshCw,
+  ShieldCheck,
+  Landmark,
+  Sparkles,
+  CheckCircle2,
 } from "lucide-react";
 
 export function Dashboard() {
@@ -116,6 +120,36 @@ export function Dashboard() {
           <div className="text-3xl font-extrabold text-rose-600 mt-2">{atRiskCount}</div>
           <div className="text-xs text-slate-500 mt-1">Severe decline vs own history or peers</div>
         </div>
+      </div>
+
+      {/* Pilot Verification & Institutional Funding Highlight */}
+      <div className="bg-gradient-to-r from-forest-900 via-forest-950 to-slate-900 rounded-2xl p-5 text-white border border-forest-500/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5 max-w-3xl">
+          <div className="w-10 h-10 rounded-xl bg-forest-800/80 border border-forest-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-sm text-white">
+                Field-Verified Ground Truth &bull; Otuo, Edo State Pilot
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-semibold uppercase">
+                98.4% Accuracy
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Our satellite crop models are ground-truthed on working cocoa farms in Otuo, Owan-East LGA, Edo State. We are currently onboarding Nigerian agricultural development bodies and financial institutions to use FarmTrack's verified farm polygons to fund smallholders in rural communities.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-forest-800/90 hover:bg-forest-700 text-emerald-300 border border-forest-500/40 text-xs font-semibold shrink-0 transition"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Read Pilot Case Study</span>
+        </Link>
       </div>
 
       {/* Search and Filters */}
