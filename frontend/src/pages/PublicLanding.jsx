@@ -27,6 +27,7 @@ import {
   Landmark,
   BadgeCheck,
   CheckCheck,
+  MapPin,
 } from "lucide-react";
 
 // Team member photos imported from src/assets
