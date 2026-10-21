@@ -28,6 +28,7 @@ import {
   BadgeCheck,
   CheckCheck,
   MapPin,
+  Bot,
 } from "lucide-react";
 
 // Team member photos imported from src/assets
@@ -397,6 +398,32 @@ export function PublicLanding() {
               <p className="text-xs text-slate-600 leading-relaxed">
                 Evaluates liquid water content inside the leaves using shortwave infrared. Critical for tracking drought stress and dry Harmattan winds.
               </p>
+            </div>
+          </div>
+
+          {/* Gemini AI Agronomist Copilot Highlight */}
+          <div className="bg-gradient-to-r from-forest-900 via-slate-900 to-emerald-950 p-6 sm:p-8 rounded-3xl border border-emerald-500/40 shadow-xl text-white flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Powered by Google Gemini</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                <Bot className="w-6 h-6 text-emerald-400" />
+                AI Agronomist Copilot &bull; Grounded in Space Data
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Raw multispectral numbers can be difficult to interpret in the field. Our Gemini-powered AI Agronomist translates complex NDVI, NDRE, and NDMI curves into clear, prioritized diagnostic plans — answering farmer questions, detecting black pod humidity thresholds, and tailoring pruning or shade advisories in real time.
+              </p>
+            </div>
+            <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow-lg shadow-emerald-900/40"
+              >
+                <span>Try AI Mode</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>

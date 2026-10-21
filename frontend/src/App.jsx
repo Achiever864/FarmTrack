@@ -14,6 +14,7 @@ import { OrganizationFarms } from "./pages/OrganizationFarms.jsx";
 import { BulkImport } from "./pages/BulkImport.jsx";
 import { OrganizationMembers } from "./pages/OrganizationMembers.jsx";
 import { AlertsInbox } from "./pages/AlertsInbox.jsx";
+import { AiCopilotDrawer } from "./components/AiCopilotDrawer.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -141,6 +142,9 @@ export function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
+      {/* Global FarmTrack AI Copilot Assistant */}
+      <AiCopilotDrawer />
     </div>
   );
 }

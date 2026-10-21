@@ -120,4 +120,18 @@ export const api = {
     getOverlayUrl: ({ bbox, from, to }) =>
       `${API_BASE}/ndvi?bbox=${bbox.join(",")}&from=${from}&to=${to}`,
   },
+
+  // Gemini AI Mode
+  ai: {
+    getFarmAdvisory: (farmId, query = "") =>
+      request(`/ai/farm-advisory/${farmId}`, {
+        method: "POST",
+        body: JSON.stringify({ query }),
+      }),
+    chat: ({ messages, farmId, orgId }) =>
+      request("/ai/chat", {
+        method: "POST",
+        body: JSON.stringify({ messages, farmId, orgId }),
+      }),
+  },
 };

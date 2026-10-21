@@ -5,6 +5,7 @@ import ndviRoutes from "./routes/ndvi.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import farmRoutes from "./routes/farm.routes.js";
 import orgRoutes from "./routes/org.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use("/auth", authRoutes);
 app.use("/farms", farmRoutes);
 app.use("/orgs", orgRoutes);
 app.use("/ndvi", ndviRoutes);
+app.use("/ai", aiRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
