@@ -193,8 +193,8 @@ export function PublicLanding() {
               </h1>
 
               <p className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
-                FarmTrack connects Earth observation satellites directly with cocoa smallholders and cooperatives.
-                Every 5 days, our algorithms analyze vegetation density, chlorophyll health, and canopy moisture across your plot boundaries — detecting stress weeks before it is visible to the naked eye.
+                FarmTrack connects Earth observation satellites directly with farmers and investors or companies keeping track of farm progress.
+                Every 5 days, our algorithms analyze vegetation density, chlorophyll health, and canopy moisture across your plot boundaries ,detecting stress weeks before it is visible to the naked eye.
               </p>
 
               {/* Action Buttons */}
@@ -213,22 +213,6 @@ export function PublicLanding() {
                 >
                   <span>Sign In</span>
                 </Link>
-              </div>
-
-              {/* Quick Trust Badges */}
-              <div className="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-4 text-xs text-slate-400">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-forest-400 shrink-0" />
-                  <span>10m Spatial Resolution</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-forest-400 shrink-0" />
-                  <span>Harmattan Calibrated</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-forest-400 shrink-0" />
-                  <span>Zero Fake Interpolations</span>
-                </div>
               </div>
             </div>
 
@@ -310,7 +294,7 @@ export function PublicLanding() {
             Bridging Space Exploration and Smallholder Prosperity
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Over 60% of the world's cocoa is cultivated by smallholder families managing plots under 3 hectares in West Africa.
+            Most of the world's cocoa comes from West Africa, grown by smallholder families on plots of just a few hectares.
             Traditional ground scouting cannot catch early chlorophyll stress or canopy moisture deficits before yields plummet.
             We are democratizing orbit-level diagnostics for every plot.
           </p>
@@ -324,13 +308,10 @@ export function PublicLanding() {
             </div>
             <h3 className="text-2xl font-bold text-slate-900">Our Mission</h3>
             <p className="text-slate-600 text-sm leading-relaxed">
-              To place satellite-grade remote sensing and honest agronomic analytics directly into the hands of smallholder farmers, cooperatives, and ethical buyers.
+              To place satellite grade remote sensing and honest agronomic analytics directly into the hands of smallholder farmers, cooperatives, and investors.
               By removing guesswork, forecasting crop stress weeks ahead, and providing verifiable transparency, we protect farmer livelihoods and prevent avoidable harvest losses.
             </p>
-            <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-forest-700">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Transparent Algorithms &bull; Zero Black Boxes &bull; Actionable Advisories</span>
-            </div>
+          
           </div>
 
           {/* Vision Card */}
@@ -340,13 +321,10 @@ export function PublicLanding() {
             </div>
             <h3 className="text-2xl font-bold text-slate-900">Our Vision</h3>
             <p className="text-slate-600 text-sm leading-relaxed">
-              A climate-resilient agricultural future across Africa and tropical agro-ecosystems where every perennial tree crop is monitored continuously from space.
-              We envision an interconnected network where satellite verification unlocks fair premium pricing, compliant supply chains under international regulations (EUDR), and climate adaptation finance for every farmer.
+              A future where every farm in rural Africa is visible, verifiable, and fundable.
+              Where AI turns satellite data into clear answers for farmers and funders, so no investment goes unaccounted for and no loss goes unseen until it is too late.
             </p>
-            <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-emerald-700">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Pan-African Scale &bull; Climate Resilience &bull; Deforestation-Free Trade</span>
-            </div>
+      
           </div>
         </div>
       </section>
@@ -359,10 +337,10 @@ export function PublicLanding() {
               Multispectral Precision
             </div>
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              Why Single-Index NDVI Is Not Enough for Cocoa
+              Why NDVI Alone Isn't Enough
             </h2>
             <p className="text-slate-600 text-sm">
-              Cocoa is an evergreen tree crop grown under shade. Traditional NDVI saturates on dense canopies. FarmTrack fuses three distinct spectral signatures:
+              NDVI tends to saturate over dense canopies and can't tell you why a crop is struggling. FarmTrack combines three spectral indices so one signal doesn't hide what another would catch:
             </p>
           </div>
 
@@ -396,7 +374,7 @@ export function PublicLanding() {
               <h3 className="font-bold text-slate-900 text-base">Normalized Difference Moisture Index</h3>
               <p className="text-xs text-slate-500 font-mono">(B08 − B11) / (B08 + B11)</p>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Evaluates liquid water content inside the leaves using shortwave infrared. Critical for tracking drought stress and dry Harmattan winds.
+                Estimates leaf water content using shortwave infrared. Useful for tracking drought stress during dry spells and the Harmattan.
               </p>
             </div>
           </div>
@@ -429,81 +407,6 @@ export function PublicLanding() {
         </div>
       </section>
 
-      {/* Planned Future Reach & Strategic Roadmap */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="text-xs font-bold text-forest-600 uppercase tracking-wider">
-            Expansion Horizons
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Our Planned Future Reach
-          </h2>
-          <p className="text-slate-600 text-sm sm:text-base">
-            From the West African cocoa belt to global tropical perennials, here is where FarmTrack is heading over the next 24 months.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Phase 1 */}
-          <div className="bg-white p-6 rounded-2xl border-2 border-forest-500 shadow-xs space-y-3 relative">
-            <span className="absolute -top-3 right-4 px-2 py-0.5 rounded-full bg-forest-600 text-white text-[10px] font-bold uppercase tracking-wider">
-              Live Now
-            </span>
-            <div className="text-xs font-bold text-forest-700 uppercase">Phase 1 &bull; Active</div>
-            <h3 className="text-lg font-bold text-slate-900">West Africa Cocoa Belt</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Full deployment across Nigeria (Ondo, Cross River, Osun) and Ghana (Western Region, Ashanti). Dual individual & cooperative portfolio modes with automated 5-day Sentinel-2 ingestion.
-            </p>
-            <ul className="text-[11px] text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-              <li>&bull; 1.5-year instant historical backfill</li>
-              <li>&bull; 25km peer farm benchmarking</li>
-              <li>&bull; Harmattan seasonal dip calibration</li>
-            </ul>
-          </div>
-
-          {/* Phase 2 */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase">Phase 2 &bull; 2027 Q1</div>
-            <h3 className="text-lg font-bold text-slate-900">Sentinel-1 Radar (SAR) Fusion</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Integration of Synthetic Aperture Radar (SAR) to penetrate thick cloud cover during West Africa's June–August monsoon, achieving 100% gap-free annual monitoring.
-            </p>
-            <ul className="text-[11px] text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-              <li>&bull; Cloud-penetrating C-band radar</li>
-              <li>&bull; Structural biomass tracking</li>
-              <li>&bull; All-weather early warnings</li>
-            </ul>
-          </div>
-
-          {/* Phase 3 */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase">Phase 3 &bull; 2027 Q3</div>
-            <h3 className="text-lg font-bold text-slate-900">Pan-Tropical Perennials</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Expanding crop profiles to highland Coffee (Ethiopia, Kenya, Uganda), Oil Palm (Southeast Asia, Nigeria), Rubber, and Cashew across Côte d'Ivoire and Cameroon.
-            </p>
-            <ul className="text-[11px] text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-              <li>&bull; 5 new perennial crop calibrations</li>
-              <li>&bull; Multi-language USSD/SMS alerts</li>
-              <li>&bull; Local agronomist advisory networks</li>
-            </ul>
-          </div>
-
-          {/* Phase 4 */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase">Phase 4 &bull; 2028+</div>
-            <h3 className="text-lg font-bold text-slate-900">EUDR & Carbon MRV</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Automated compliance audits for EU Deforestation Regulation (EUDR) cut-off dates and soil carbon sequestration verification for carbon credit distribution to farmers.
-            </p>
-            <ul className="text-[11px] text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-              <li>&bull; Zero-deforestation polygon audit</li>
-              <li>&bull; Agroforestry canopy shade verification</li>
-              <li>&bull; Direct carbon credit revenue share</li>
-            </ul>
-          </div>
-        </div>
-      </section>
 
       {/* Field Validation Pilot (Otuo, Edo State) & Institutional Rural Financing */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
@@ -516,7 +419,7 @@ export function PublicLanding() {
             From Space Orbit to Ground Truth
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            FarmTrack is not a theoretical laboratory concept. We took our satellite telemetry directly to active cocoa farmlands in Otuo, Edo State to prove that our orbital models mirror the physical soil and trees — and we are now partnering with Nigerian organizations to fund rural farmers.
+            FarmTrack is not a theoretical laboratory concept. We took our satellite telemetry directly to active cocoa farmlands in Otuo, Edo State to prove that our orbital models mirror the physical soil and trees and we are now partnering with Nigerian organizations to fund rural farmers.
           </p>
         </div>
 
