@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 export function AiCopilotDrawer() {
-  const { user } = useAuth();
+  const { user, activeOrg } = useAuth();
   const location = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -36,13 +36,16 @@ export function AiCopilotDrawer() {
   useEffect(() => {
     if (user) {
       api.farms
-        .list({ limit: 50 })
+        .list({
+          orgId: activeOrg?._id || undefined,
+          limit: 100,
+        })
         .then((res) => {
           setFarms(res.farms || []);
         })
         .catch(() => {});
     }
-  }, [user]);
+  }, [user, activeOrg]);
 
   // Sync selected farm with URL if on a farm detail page
   useEffect(() => {
@@ -82,6 +85,7 @@ export function AiCopilotDrawer() {
       const res = await api.ai.chat({
         messages: newMessages,
         farmId: selectedFarmId || undefined,
+        orgId: activeOrg?._id || undefined,
       });
 
       setMessages((prev) => [
@@ -256,24 +260,31 @@ export function AiCopilotDrawer() {
               <div className="flex flex-wrap gap-1.5">
                 <button
                   type="button"
+                  onClick={() => handleQuickPrompt("Which of my farms are not doing well?")}
+                  className="px-2.5 py-1 rounded-full bg-red-950/60 hover:bg-red-900/80 text-red-200 text-[11px] border border-red-700/60 transition flex items-center gap-1 font-semibold"
+                >
+                  ⚠️ Which of my farms are not doing well?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickPrompt("Give me a health and satellite telemetry summary of all my registered farms.")}
+                  className="px-2.5 py-1 rounded-full bg-forest-900/60 hover:bg-forest-800/80 text-emerald-200 text-[11px] border border-forest-600/60 transition flex items-center gap-1"
+                >
+                  📊 All farms overview
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleQuickPrompt("What are the key steps to protect my cocoa farm during the Harmattan dry season?")}
                   className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition"
                 >
-                  🌾 Harmattan dry season guide
+                  🌾 Harmattan guide
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickPrompt("How do I interpret my farm's NDVI, NDRE, and NDMI numbers?")}
                   className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition"
                 >
-                  🛰️ Explain satellite indices
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickPrompt("What immediate actions should I take to prevent Black Pod disease during high humidity?")}
-                  className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition"
-                >
-                  🛡️ Prevent Black Pod fungus
+                  🛰️ Explain indices
                 </button>
               </div>
             </div>
@@ -295,7 +306,7 @@ export function AiCopilotDrawer() {
                 placeholder={
                   selectedFarm
                     ? `Ask about ${selectedFarm.name}...`
-                    : "Ask about cocoa farming, NDVI, pests, or seasons..."
+                    : "Ask 'which of my farms are not doing well?' or about NDVI..."
                 }
                 disabled={loading}
                 className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-forest-500 transition"

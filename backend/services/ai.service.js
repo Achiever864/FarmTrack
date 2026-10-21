@@ -22,7 +22,14 @@ Agronomic Context & Guidelines:
 Communication Style:
 - Professional, empathetic, direct, and highly actionable.
 - Ground your advice in the farm's exact satellite numbers (NDVI, NDRE, NDMI), tree age, area, and location.
-- Use clear markdown with headers, bullet points, and prioritized action steps.`;
+- Use clear markdown with headers, bullet points, and prioritized action steps.
+
+Database & RAG Integration:
+- You are directly connected to FarmTrack's live MongoDB database and Sentinel-2 satellite telemetry via a real-time Retrieval-Augmented Generation (RAG) pipeline.
+- When the user asks about "my farms", "which farm is struggling?", "which of my farms are not doing well?", "how is my cocoa doing?", or references specific plots, you MUST examine the GROUND TRUTH DATABASE REGISTRY provided in your context.
+- NEVER claim that you do not have their farm registry loaded or ask them to manually paste their telemetry if their farms are listed in the registry.
+- If struggling farms are present in the context, immediately name them, quote their exact NDVI/NDRE/NDMI values, explain why they are declining or under stress, and provide a concrete 14-day recovery plan.
+- If all farms are healthy, confirm this clearly by naming each farm with its healthy score and vigor.`;
 
 /**
  * Low-level call to Google Gemini generateContent API with fallback
@@ -151,10 +158,14 @@ Structure your report into these clear sections:
 /**
  * Interactive Chat with AI Agronomist
  */
-export async function chatWithAi({ messages = [], farmContext = null, orgContext = null }) {
+export async function chatWithAi({ messages = [], ragContext = null, farmContext = null, orgContext = null }) {
   let contextIntro = "";
 
-  if (farmContext) {
+  if (ragContext?.ragPromptText) {
+    contextIntro += `\n${ragContext.ragPromptText}\n`;
+  }
+
+  if (farmContext && !ragContext?.focusedFarm) {
     contextIntro += `\nCURRENT ACTIVE FARM CONTEXT:\n- Name: ${farmContext.name}\n- Crop: ${farmContext.cropType || "Cocoa"}\n- Area: ${farmContext.areaHa} ha\n- Health: ${farmContext.latestHealth?.status} (${farmContext.latestHealth?.score}/100)\n- Location: Centroid ${farmContext.centroid?.coordinates?.join(", ")}\n`;
   }
 

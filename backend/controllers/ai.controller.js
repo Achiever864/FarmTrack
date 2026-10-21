@@ -6,6 +6,7 @@ import Membership from "../models/membership.model.js";
 import { computeFarmHealth } from "../services/analysis/health.service.js";
 import { computePhenology } from "../services/analysis/phenology.service.js";
 import { generateFarmAdvisory, chatWithAi } from "../services/ai.service.js";
+import { buildUserRagContext } from "../services/rag.service.js";
 
 async function userCanAccessFarm(userId, farm) {
   if (farm.ownerType === "user") {
@@ -63,6 +64,7 @@ export async function getFarmAiAdvisory(req, res) {
 
 /**
  * Handles conversational queries with the FarmTrack AI Agronomist Copilot
+ * grounded in real-time RAG context from the user's registered farms in MongoDB
  */
 export async function handleAiChat(req, res) {
   try {
@@ -71,6 +73,17 @@ export async function handleAiChat(req, res) {
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages array is required" });
     }
+
+    // Extract latest user message for search query grounding
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    const userQuery = lastUserMsg?.content || "";
+
+    // 1. Execute RAG: Retrieve user's registered farms, latest observations, and active alerts from MongoDB
+    const ragContext = await buildUserRagContext(req.user._id, {
+      farmId: farmId || null,
+      orgId: orgId || null,
+      userQuery,
+    });
 
     let farmContext = null;
     let orgContext = null;
@@ -95,11 +108,20 @@ export async function handleAiChat(req, res) {
 
     const reply = await chatWithAi({
       messages,
+      ragContext,
       farmContext,
       orgContext,
     });
 
-    res.json({ reply });
+    res.json({
+      reply,
+      ragMetadata: {
+        totalFarms: ragContext.totalFarms,
+        strugglingCount: ragContext.strugglingCount,
+        healthyCount: ragContext.healthyCount,
+        focusedFarm: ragContext.focusedFarm?.name || null,
+      },
+    });
   } catch (err) {
     console.error("[AI Controller] Chat error:", err);
     res.status(500).json({ error: err.message || "Failed to process AI chat message" });
