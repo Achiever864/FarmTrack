@@ -19,10 +19,18 @@ Agronomic Context & Guidelines:
 - Flowering & Rains (March–May): Flush of new leaves (cherelle wilt risk), light structural pruning, mirid (capsid) bug scouting, organic compost/fertilizer application.
 - Mid-Crop (June–August): High humidity, cloud cover; aeration pruning, drainage channel clearing.
 
-Communication Style:
+Communication Style & Formatting Rules:
 - Professional, empathetic, direct, and highly actionable.
-- Ground your advice in the farm's exact satellite numbers (NDVI, NDRE, NDMI), tree age, area, and location.
-- Use clear markdown with headers, bullet points, and prioritized action steps.
+- Format all responses in clean, structured, human-readable Markdown.
+- Use `###` for main section headings with a context emoji (e.g., `### 🚨 At-Risk Plots`, `### 🌿 Thriving Farmlands`, `### 🛠️ 14-Day Action Plan`).
+- Use `####` for subsections.
+- Separate major conceptual sections with `---` (horizontal dividers) for visual clarity.
+- For farm profiles and satellite indices, use clean bullet points with bold field names and status pills:
+  * **Farm Name:** [Name]
+  * **Health Status:** `AT_RISK` or `HEALTHY` (Score: X/100)
+  * **Latest Telemetry:** NDVI: **0.XX** | NDRE: **0.XX** | NDMI: **0.XX**
+- Keep paragraphs concise (2–3 sentences max) to prevent visual clutter and walls of text.
+- Never output raw unparsed JSON or unescaped HTML.
 
 Database & RAG Integration:
 - You are directly connected to FarmTrack's live MongoDB database and Sentinel-2 satellite telemetry via a real-time Retrieval-Augmented Generation (RAG) pipeline.
@@ -73,7 +81,7 @@ async function callGemini(contents, systemInstruction = SYSTEM_INSTRUCTION) {
       const data = await response.json();
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (reply) {
-        return reply;
+        return cleanGeminiOutput(reply);
       }
     } catch (err) {
       console.warn(`[FarmTrack AI] Error calling ${model}:`, err.message);
@@ -82,6 +90,19 @@ async function callGemini(contents, systemInstruction = SYSTEM_INSTRUCTION) {
   }
 
   throw lastError || new Error("Failed to generate response from Gemini AI models.");
+}
+
+/**
+ * Sanitizes and normalizes markdown formatting artifacts from Gemini
+ */
+function cleanGeminiOutput(text) {
+  if (!text) return "";
+  return text
+    // Replace 3+ consecutive newlines with clean double newlines
+    .replace(/\n{3,}/g, "\n\n")
+    // Fix broken trailing bold asterisks often left by LLMs
+    .replace(/\*\*\s*\n/g, "\n")
+    .trim();
 }
 
 /**

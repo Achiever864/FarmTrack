@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
+import { FormattedAiMessage } from "./FormattedAiMessage.jsx";
 
 export function AiCopilotDrawer() {
   const { user, activeOrg } = useAuth();
@@ -222,15 +223,15 @@ export function AiCopilotDrawer() {
                     {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
                   </div>
 
-                  <div
-                    className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed ${
-                      isUser
-                        ? "bg-forest-700 text-white rounded-tr-none shadow-sm"
-                        : "bg-slate-800/90 text-slate-200 border border-slate-700/80 rounded-tl-none whitespace-pre-wrap"
-                    }`}
-                  >
-                    {m.content}
-                  </div>
+                  {isUser ? (
+                    <div className="max-w-[85%] rounded-2xl p-3.5 leading-relaxed bg-forest-700 text-white rounded-tr-none shadow-sm whitespace-pre-wrap">
+                      {m.content}
+                    </div>
+                  ) : (
+                    <div className="max-w-[90%] sm:max-w-[88%] rounded-2xl p-4 leading-relaxed bg-slate-800/95 text-slate-200 border border-slate-700/80 rounded-tl-none shadow-md overflow-hidden">
+                      <FormattedAiMessage content={m.content} isDark={true} />
+                    </div>
+                  )}
                 </div>
               );
             })}

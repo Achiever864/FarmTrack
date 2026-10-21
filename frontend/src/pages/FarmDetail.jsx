@@ -23,6 +23,7 @@ import {
   Loader2,
   Send,
 } from "lucide-react";
+import { FormattedAiMessage } from "../components/FormattedAiMessage.jsx";
 
 export function FarmDetail() {
   const { id } = useParams();
@@ -360,8 +361,8 @@ export function FarmDetail() {
         {/* Advisory Output */}
         {!aiLoading && aiAdvisory && (
           <div className="space-y-4">
-            <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap max-h-[500px] overflow-y-auto">
-              {aiAdvisory}
+            <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 text-xs sm:text-sm text-slate-200 leading-relaxed max-h-[600px] overflow-y-auto shadow-inner">
+              <FormattedAiMessage content={aiAdvisory} isDark={true} />
             </div>
 
             {/* Quick interactive follow-up question input */}
