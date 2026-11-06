@@ -175,13 +175,6 @@ export function PublicLanding() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
 
         <div className="relative max-w-7xl mx-auto space-y-12">
-          {/* Top Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-forest-500/40 bg-forest-900/40 text-forest-300 text-xs font-semibold tracking-wide backdrop-blur-md">
-            <Satellite className="w-3.5 h-3.5 text-forest-400" />
-            <span>Sentinel-2 L2A Multispectral Earth Observation</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-forest-400 animate-pulse" />
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Hero Content */}
             <div className="lg:col-span-7 space-y-6">
