@@ -442,7 +442,9 @@ export function FormattedAiMessage({ content, isDark = true, className = "" }) {
                   <div
                     key={itemIdx}
                     className={`flex items-start gap-2.5 ${
-                      isSubItem ? "ml-5 text-slate-300 text-[11px] sm:text-xs" : "text-xs sm:text-sm"
+                      isSubItem
+                        ? `ml-5 text-[11px] sm:text-xs ${isDark ? "text-slate-300" : "text-slate-600"}`
+                        : `text-xs sm:text-sm ${isDark ? "text-slate-200" : "text-slate-700"}`
                     }`}
                   >
                     {item.isNumbered ? (

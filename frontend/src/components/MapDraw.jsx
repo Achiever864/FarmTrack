@@ -6,7 +6,6 @@ import {
   RotateCcw,
   Check,
   MapPin,
-  Navigation,
   Footprints,
   Loader2,
   Pin,
@@ -15,7 +14,12 @@ import {
   Trash2,
   AlertCircle,
   LocateFixed,
+  Ruler,
 } from "lucide-react";
+
+const btnBase =
+  "inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed";
+const btnNeutral = `${btnBase} border border-slate-200 bg-white text-slate-700 hover:bg-slate-50`;
 
 export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
   const mapContainerRef = useRef(null);
@@ -45,10 +49,22 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
   const lastRecordedPosRef = useRef(null);
   const isWalkPausedRef = useRef(false);
 
-  // Keep ref synchronized with state for geolocation callback
+    // Keep refs synchronized with state so long-lived callbacks
+  // (map click handler, geolocation watcher) always see current values
+  const isClosedRef = useRef(false);
+  const isWalkingRef = useRef(false);
+
   useEffect(() => {
     isWalkPausedRef.current = isWalkPaused;
   }, [isWalkPaused]);
+
+  useEffect(() => {
+    isClosedRef.current = isClosed;
+  }, [isClosed]);
+
+  useEffect(() => {
+    isWalkingRef.current = isWalking;
+  }, [isWalking]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
@@ -73,13 +89,9 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
     walkLayerRef.current = L.layerGroup().addTo(map);
 
     map.on("click", (e) => {
-      // Disallow clicking map if in active walk tracking mode or polygon closed
-      if (isWalking) return;
-      setPoints((prev) => {
-        if (isClosed) return prev;
-        const next = [...prev, [e.latlng.lat, e.latlng.lng]];
-        return next;
-      });
+      // Ignore clicks during an active GPS walk or once the polygon is closed
+      if (isWalkingRef.current || isClosedRef.current) return;
+      setPoints((prev) => [...prev, [e.latlng.lat, e.latlng.lng]]);
     });
 
     return () => {
@@ -428,34 +440,48 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
 
   return (
     <div className="space-y-3">
-      {/* Top Action & Mode Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+      {/* Toolbar */}
+      <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          {/* Complete / Status button */}
+          {/* Complete / Status */}
           {!isClosed ? (
             <button
               type="button"
               disabled={points.length < 3 || isWalking}
               onClick={closePolygon}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-xs font-semibold shadow-sm transition"
+              className={`${btnBase} bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm`}
             >
               <Check className="w-4 h-4" />
-              Complete Boundary ({points.length} vertices)
+              Complete Boundary ({points.length})
             </button>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
               <Check className="w-4 h-4 text-emerald-600" />
               Polygon Closed
             </span>
           )}
 
-          {/* Find My Location Button */}
+          {/* Walk Boundary Mode */}
+          {!isWalking && (
+            <button
+              type="button"
+              onClick={startWalkingBoundary}
+              disabled={isClosed}
+              title="Walk the farm perimeter with your phone to record boundaries automatically"
+              className={`${btnBase} bg-forest-700 hover:bg-forest-800 text-white shadow-xs`}
+            >
+              <Footprints className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Walk to Map Boundary</span>
+            </button>
+          )}
+
+          {/* Find My Location */}
           <button
             type="button"
             onClick={handleFindLocation}
             disabled={locating || isWalking}
             title="Center map on your current GPS location"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-50 text-xs font-semibold transition"
+            className={btnNeutral}
           >
             {locating ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-forest-600" />
@@ -465,38 +491,19 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
             <span>{locating ? "Locating..." : "Find My Location"}</span>
           </button>
 
-          {/* Walk Boundary Mode Toggle */}
-          {!isWalking ? (
-            <button
-              type="button"
-              onClick={startWalkingBoundary}
-              disabled={isClosed}
-              title="Walk the farm perimeter with your phone to record boundaries automatically"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-forest-700 hover:bg-forest-800 text-white text-xs font-semibold shadow-xs transition"
-            >
-              <Footprints className="w-3.5 h-3.5 text-emerald-300" />
-              <span>Walk to Map Boundary</span>
-            </button>
-          ) : null}
-
-          {/* Standard manual drawing controls */}
+          {/* Manual drawing controls */}
           {!isWalking && (
             <>
-              <button
-                type="button"
-                disabled={points.length === 0}
-                onClick={handleUndo}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 text-xs font-medium transition"
-              >
+              <button type="button" disabled={points.length === 0} onClick={handleUndo} className={btnNeutral}>
                 <Undo2 className="w-3.5 h-3.5" />
-                Undo Point
+                Undo
               </button>
 
               <button
                 type="button"
                 disabled={points.length === 0}
                 onClick={handleReset}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 text-rose-600 hover:bg-rose-50 disabled:opacity-40 text-xs font-medium transition"
+                className={`${btnBase} border border-slate-200 bg-white text-rose-600 hover:bg-rose-50`}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Clear
@@ -505,16 +512,19 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
           )}
         </div>
 
-        {/* Calculated Area Gauge */}
-        <div className="flex items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-500 font-medium">Calculated Area:</span>
-            <span className="font-bold text-slate-800 text-sm">{areaHa.toFixed(2)} ha</span>
+        {/* Calculated Area */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-3 border-t border-slate-200">
+          <div className="flex items-center gap-2">
+            <Ruler className="w-4 h-4 text-slate-400" />
+            <span className="text-xs font-medium text-slate-500">Calculated area</span>
+            <span className="font-display text-sm font-extrabold text-slate-900 tabular">
+              {areaHa.toFixed(2)} ha
+            </span>
           </div>
 
           {areaHa > 0 && areaHa < 0.5 && (
-            <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
-              Notice: Under 0.5 ha has higher pixel edge noise.
+            <span className="text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-200 text-[11px]">
+              Under 0.5 ha has higher pixel edge noise.
             </span>
           )}
         </div>
@@ -522,136 +532,147 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
 
       {/* Geolocation Notice / Error banner */}
       {locationError && (
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
-          <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+        <div
+          role="alert"
+          className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs"
+        >
+          <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <span>{locationError}</span>
         </div>
       )}
 
       {/* Preset cocoa jump points */}
-      <div className="flex items-center gap-2 text-xs text-slate-500 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 text-xs overflow-x-auto pb-1">
         <span className="flex items-center gap-1 font-medium text-slate-600 shrink-0">
           <MapPin className="w-3.5 h-3.5 text-forest-600" /> Jump to:
         </span>
         <button
           type="button"
           onClick={() => jumpToRegion(7.195, 6.012, "Otuo, Edo State")}
-          className="px-2.5 py-1 rounded-md bg-forest-50 hover:bg-forest-100 text-forest-800 border border-forest-200 font-semibold shrink-0 transition"
+          className="px-3 py-1.5 rounded-full bg-forest-50 hover:bg-forest-100 text-forest-800 border border-forest-200 font-semibold shrink-0 transition"
         >
-          Otuo Pilot Farm (Edo State, Nigeria)
+          Otuo Pilot Farm (Edo, NG)
         </button>
         <button
           type="button"
           onClick={() => jumpToRegion(7.098, 5.056, "Ondo, Nigeria")}
-          className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0"
+          className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 transition"
         >
-          Ondo Cocoa Belt (Nigeria)
+          Ondo Cocoa Belt (NG)
         </button>
         <button
           type="button"
           onClick={() => jumpToRegion(6.215, -2.486, "Sefwi Wiawso, Ghana")}
-          className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0"
+          className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 transition"
         >
           Western Region (Ghana)
         </button>
         <button
           type="button"
           onClick={() => jumpToRegion(6.827, -5.289, "Yamoussoukro, Côte d'Ivoire")}
-          className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0"
+          className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 transition"
         >
-          Yamoussoukro (Côte d'Ivoire)
+          Yamoussoukro (CI)
         </button>
       </div>
 
       {/* Map Viewport & Overlay HUDs */}
-      <div className="relative w-full h-[500px] rounded-xl overflow-hidden border border-slate-300 shadow-inner">
+      <div className="relative w-full h-[420px] sm:h-[520px] rounded-xl overflow-hidden border border-slate-300 shadow-inner">
         <div ref={mapContainerRef} className="w-full h-full" />
 
-        {/* Walk Tracking Floating HUD */}
+        {/* Walk Tracking HUD (docked at the bottom so it never covers the map controls) */}
         {isWalking && (
-          <div className="absolute top-4 left-4 right-4 z-20 bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-xl border border-emerald-500/40 shadow-xl space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-2.5">
+          <div className="absolute bottom-7 left-3 right-3 z-20 bg-slate-900/95 backdrop-blur-md text-white p-3 rounded-xl border border-emerald-500/40 shadow-xl space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-3 w-3 relative">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isWalkPaused ? "bg-amber-400" : "bg-emerald-400"} opacity-75`} />
-                  <span className={`relative inline-flex rounded-full h-3 w-3 ${isWalkPaused ? "bg-amber-500" : "bg-emerald-500"}`} />
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span
+                    className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                      isWalkPaused ? "bg-amber-400" : "bg-emerald-400"
+                    } opacity-75`}
+                  />
+                  <span
+                    className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                      isWalkPaused ? "bg-amber-500" : "bg-emerald-500"
+                    }`}
+                  />
                 </span>
-                <span className="font-bold text-xs tracking-wider uppercase text-emerald-400">
-                  {isWalkPaused ? "GPS Tracking Paused" : "Live GPS Field Walk Active"}
+                <span className="font-bold text-[11px] tracking-wider uppercase text-emerald-400">
+                  {isWalkPaused ? "GPS Tracking Paused" : "Live GPS Walk Active"}
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-slate-300">
-                <div>
-                  <span className="text-slate-400">Vertices: </span>
-                  <strong className="text-white">{points.length}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-400">Distance: </span>
-                  <strong className="text-white">{walkStats.distanceMeters} m</strong>
-                </div>
+              <div className="flex items-center gap-3 text-[11px] text-slate-300 tabular">
+                <span>
+                  Points <strong className="text-white">{points.length}</strong>
+                </span>
+                <span>
+                  Distance <strong className="text-white">{walkStats.distanceMeters} m</strong>
+                </span>
                 {walkStats.accuracy !== null && (
-                  <div>
-                    <span className="text-slate-400">GPS Accuracy: </span>
-                    <strong className="text-emerald-300">&plusmn;{walkStats.accuracy}m</strong>
-                  </div>
+                  <span>
+                    GPS <strong className="text-emerald-300">&plusmn;{walkStats.accuracy}m</strong>
+                  </span>
                 )}
               </div>
             </div>
 
-            {/* Walk action buttons */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={pinCornerPoint}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold shadow-xs transition"
-                >
-                  <Pin className="w-3.5 h-3.5" />
-                  <span>Pin Corner Here</span>
-                </button>
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2">
+              <button
+                type="button"
+                onClick={pinCornerPoint}
+                className={`${btnBase} bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30`}
+              >
+                <Pin className="w-3.5 h-3.5" />
+                <span>Pin Corner</span>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={togglePauseWalk}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition"
-                >
-                  {isWalkPaused ? <Play className="w-3.5 h-3.5 text-emerald-400" /> : <Pause className="w-3.5 h-3.5 text-amber-400" />}
-                  <span>{isWalkPaused ? "Resume Walk" : "Pause Walk"}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={togglePauseWalk}
+                className={`${btnBase} bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700`}
+              >
+                {isWalkPaused ? (
+                  <Play className="w-3.5 h-3.5 text-emerald-400" />
+                ) : (
+                  <Pause className="w-3.5 h-3.5 text-amber-400" />
+                )}
+                <span>{isWalkPaused ? "Resume" : "Pause"}</span>
+              </button>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={finishWalkBoundary}
-                  disabled={points.length < 3}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-bold shadow-md transition"
-                >
-                  <Check className="w-4 h-4" />
-                  <span>Finish & Close Polygon</span>
-                </button>
+              <button
+                type="button"
+                onClick={finishWalkBoundary}
+                disabled={points.length < 3}
+                className={`${btnBase} col-span-2 sm:col-span-1 sm:ml-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-md`}
+              >
+                <Check className="w-4 h-4" />
+                <span>Finish & Close Polygon</span>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={discardWalk}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-xs font-medium transition"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Discard</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={discardWalk}
+                className={`${btnBase} col-span-2 sm:col-span-1 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40`}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Discard</span>
+              </button>
             </div>
           </div>
         )}
 
-        {/* Empty state guidance */}
+        {/* Empty state guidance (offset so it doesn't cover the zoom buttons) */}
         {!isWalking && points.length === 0 && (
-          <div className="absolute top-4 left-4 z-20 bg-slate-900/85 backdrop-blur-md text-white px-3.5 py-2.5 rounded-xl text-xs shadow-lg max-w-sm border border-slate-700/60 pointer-events-none">
-            <p className="font-semibold text-emerald-300 mb-0.5">Two Ways to Map Your Farm Boundary:</p>
-            <ul className="space-y-1 text-slate-300 text-[11px]">
-              <li>&bull; <strong>Click on Map:</strong> Click points around your boundary to draw manually.</li>
-              <li>&bull; <strong>Walk to Map:</strong> Click "Walk to Map Boundary" and walk your farm's perimeter.</li>
+          <div className="absolute top-3 left-14 right-3 sm:right-auto z-20 bg-slate-900/85 backdrop-blur-md text-white px-3.5 py-2.5 rounded-xl text-xs shadow-lg sm:max-w-xs border border-slate-700/60 pointer-events-none">
+            <p className="font-semibold text-emerald-300 mb-1">Two ways to map your farm:</p>
+            <ul className="space-y-1 text-slate-300 text-[11px] leading-relaxed">
+              <li>
+                &bull; <strong className="text-white">Tap the map</strong> around your boundary to draw it.
+              </li>
+              <li>
+                &bull; <strong className="text-white">Walk to Map:</strong> walk the perimeter with your phone's GPS.
+              </li>
             </ul>
           </div>
         )}
@@ -659,4 +680,3 @@ export function MapDraw({ initialCoordinates = null, onPolygonChange }) {
     </div>
   );
 }
-

@@ -1,7 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { Layers, Eye, EyeOff } from "lucide-react";
+import { Layers, Loader2 } from "lucide-react";
 import { api } from "../api/client.js";
+
+// Matches the colour ramp used by the backend's NDVI evalscript
+const NDVI_LEGEND = [
+  { color: "#808080", label: "< 0" },
+  { color: "#ccb380", label: "0 – 0.2" },
+  { color: "#b3d966", label: "0.2 – 0.4" },
+  { color: "#4db333", label: "0.4 – 0.6" },
+  { color: "#006619", label: "> 0.6" },
+];
+
+const STATUS_CHIP = {
+  healthy: { label: "Healthy", dot: "bg-emerald-500" },
+  watch: { label: "Watch", dot: "bg-amber-500" },
+  at_risk: { label: "At Risk", dot: "bg-rose-500" },
+  insufficient_data: { label: "Insufficient Data", dot: "bg-blue-500" },
+};
 
 export function FarmMap({ farm, healthStatus = "healthy" }) {
   const mapContainerRef = useRef(null);
@@ -50,7 +66,7 @@ export function FarmMap({ farm, healthStatus = "healthy" }) {
     }).addTo(map);
 
     poly.bindPopup(`
-      <div style="font-family: sans-serif; font-size: 13px;">
+      <div style="font-family: inherit; font-size: 13px; line-height: 1.5;">
         <strong>${farm.name}</strong><br/>
         Crop: ${farm.cropType || "Cocoa"}<br/>
         Area: ${farm.areaHa} ha<br/>
@@ -133,26 +149,49 @@ export function FarmMap({ farm, healthStatus = "healthy" }) {
     };
   }, [showNdviOverlay, farm]);
 
+  const chip = STATUS_CHIP[healthStatus] || STATUS_CHIP.healthy;
+
   return (
-    <div className="relative w-full h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+    <div className="relative w-full h-[320px] sm:h-[440px] rounded-2xl overflow-hidden border border-slate-200 shadow-card">
       <div ref={mapContainerRef} className="w-full h-full" />
+
+      {/* Health chip */}
+      <div className="absolute top-3 left-14 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur text-white text-xs font-semibold shadow-md pointer-events-none">
+        <span className={`w-2 h-2 rounded-full ${chip.dot}`} />
+        {chip.label}
+      </div>
 
       {/* Overlay Toggle Control */}
       <div className="absolute top-3 right-3 z-20">
         <button
           type="button"
           onClick={() => setShowNdviOverlay(!showNdviOverlay)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition ${
+          aria-pressed={showNdviOverlay}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md transition ${
             showNdviOverlay
               ? "bg-forest-600 text-white hover:bg-forest-700"
               : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
           }`}
         >
-          <Layers className="w-4 h-4" />
+          {overlayLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
           <span>{showNdviOverlay ? "Hide NDVI Overlay" : "Show NDVI Overlay"}</span>
-          {overlayLoading && <span className="animate-spin text-xs">⏳</span>}
         </button>
       </div>
+
+      {/* NDVI legend (only while the overlay is on) */}
+      {showNdviOverlay && (
+        <div className="absolute bottom-6 left-3 z-20 bg-white/95 backdrop-blur rounded-xl border border-slate-200 shadow-lg p-3 space-y-2">
+          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">NDVI (last 45 days)</div>
+          <div className="flex items-stretch gap-0.5">
+            {NDVI_LEGEND.map((l) => (
+              <div key={l.label} className="text-center">
+                <div className="h-2.5 w-9 first:rounded-l-full last:rounded-r-full" style={{ backgroundColor: l.color }} />
+                <div className="text-[9px] text-slate-500 mt-1 tabular whitespace-nowrap">{l.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
